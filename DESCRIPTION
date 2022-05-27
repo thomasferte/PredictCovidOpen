@@ -1,0 +1,44 @@
+Type: Package
+Package: PredictCovid
+Title: Predict Covid-19 hospitalisations from EHR and Open data
+Version: 0.1.0
+Authors@R: 
+    person("Thomas", "Ferté", , "thomas.ferte@u-bordeaux.fr", role = c("aut", "cre"))
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: This project contain the code used for the preprint Ferté, Thomas and Jouhet, Vianney and Griffier, Romain and Hejblum, Boris P. and Thiébaut, Rodolphe and crisis Task, Bordeaux University Hospital Covid-19, The Benefit of Augmenting Open Data with Clinical Data-Warehouse EHR for Forecasting SARS-CoV-2 Hospitalizations in Bordeaux Area, France. Available at SSRN: https://ssrn.com/abstract=4071506 or http://dx.doi.org/10.2139/ssrn.4071506.
+License: GPL (>= 3)
+Depends: 
+    R (>= 3.5.0)
+Imports: 
+    dplyr,
+    fastDummies,
+    forcats,
+    ggplot2,
+    ggsci,
+    glmnet,
+    janitor,
+    lme4,
+    lubridate,
+    pbapply,
+    purrr,
+    RcppRoll,
+    slider,
+    stats,
+    stringr,
+    tibble,
+    tidyquant,
+    tidyr,
+    utils,
+    viridis,
+    FrechForest,
+    hablar,
+    JuliaCall,
+    randomForest,
+    ranger,
+    worldmet (== 0.9.3),
+    e1071,
+    mfp,
+    mice
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2

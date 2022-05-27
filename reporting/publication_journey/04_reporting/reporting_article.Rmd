@@ -1,0 +1,226 @@
+---
+title: "Opendata and datawarehouse ... a COVID19 machine learning tale"
+author: "TF"
+date: "`r Sys.Date()`"
+output:
+  bookdown::github_document2:
+    toc: true
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(kableExtra)
+library(knitr)
+library(PredictCovid)
+
+format_kable = "pipe"
+
+load("../../../extdata/publication_datasets/results/20220311/precompute_for_report.rdata")
+```
+
+# Objective
+
+Sketch results section for article submission.
+
+# Abbreviations
+
+-   MAE : median absolute error
+-   MRE : median relative error
+
+# Results - descriptive graph
+
+```{r variantFigure, fig.cap="Majority variant evolution by department.", fig.height=9}
+# ### Import majority variant
+# dfVariants <- ImportMajorityVariant() %>%
+#   mutate(Majority_variant = as.character(Majority_variant)) %>%
+#   rename("DATE" = "DATA_DAY") %>%
+#   filter(DATE <= as.Date("2021-08-16"))
+# saveRDS(object = dfVariants, file = "../../../extdata/publication_datasets/dfVariants.rds")
+variantFigure
+
+ggsave(device = "pdf", filename = "figures_pdf/FigS1_variantFigure.pdf")
+```
+
+```{r PCR, fig.cap="PCR and hospitalisations at CHU de Bordeaux. Simple moving average 7 days. Dotted line represents the maximum of hospitalisations of April peak."}
+PCR
+
+ggsave(device = "pdf", filename = "figures_pdf/Fig1_PCR.pdf")
+```
+
+During the period from `r dateStudy[1]` to `r dateStudy[2]`, `r cumNewHosp` hospitalization due to COVID19 were recorded
+
+```{r}
+dfDiagBeofreLOCF  %>%
+  knitr::kable(caption = "Max number of consecutive days for LOCF imputation", format = format_kable) %>%
+  kableExtra::kable_styling()
+```
+
+# Results - Analysis of the best model
+
+Goal of second part of results is to show the predictions of the model using :
+
+-   source = CHU only (+ Gironde data)
+-   features = Open data + datawarehouse
+-   smoothing span = 21 days
+-   model = linear regression with elastic-net
+
+We compute features importance and forecast predictions specifically regarding forecast delay.
+
+## Plot prediction in delay style
+
+```{r figDelay, fig.cap="Prediction delay according to forecast and Date", fig.height=7}
+figDelay
+
+ggsave(device = "pdf", filename = "figures_pdf/FigS2_figDelay.pdf")
+```
+
+Conclusion
+
+-   Delay around 4 days for a 7 days forecast
+-   Delay aroung 6 days for a 14 days forecast
+
+## Plot predictions in movie style
+
+```{r figPredMovie, fig.cap="Hospitalisation forecast each day according to different forecast time.", fig.height=4}
+figPredMovie
+
+ggsave(device = "pdf", filename = "figures_pdf/Fig3_figPredMovie.pdf")
+```
+
+Conclusion
+
+-   Predictions are good from january to june, then they largely over estimating number of hospitalisations suggesting a vaccine effect.
+-   The april decrease is too much anticipated
+-   The intra-hospital cluster of december leads to wrong predictions
+
+## EDS vs no EDS
+
+```{r plotEDSvsNoEDS, fig.cap="Forecast depending on the use of EHR data"}
+plotEDSvsNoEDS
+```
+
+# Results Bootstrap
+
+```{r}
+dfPerfBoot %>%
+  filter(span == 21, model == "enet", rolderiv == "TRUE") %>%
+  select(forecast, df, step, AE_median, RE_median) %>%
+  mutate(step = factor(as.character(step),
+                       levels = c("HospPCR",
+                                  "HospPCRWeather",
+                                  "HospPCRWeatherVariantsVaccine",
+                                  "HospPCRGironde",
+                                  "HospPCRGirondeWeather",
+                                  "EDSGirondeWeather",
+                                  "EDSGirondeWeatherVariantsVaccine",
+                                  "EDSGirondeWeatherVariantsVaccineInterVariant",
+                                  "EDSGirondeWeatherVariantsVaccineInterVaccine"),
+                       labels = c("Hosp + RT-PCR",
+                                  "Hosp + RT-PCR + Weather",
+                                  "Hosp + RT-PCR + Weather + Variants + Vaccine",
+                                  "Hosp + RT-R + Gironde Hosp + Gironde RT-PCR",
+                                  "Hosp + RT-R + Gironde Hosp + Gironde RT-PCR + Weather",
+                                  "Hosp + RT-R + Gironde Hosp + Gironde RT-PCR + Weather + CT-scan + emergency units + ambulance service",
+                                  "Hosp + RT-R + Gironde Hosp + Gironde RT-PCR + Weather + CT-scan + emergency units + ambulance service + Variants + Vaccine",
+                                  "Hosp + RT-R + Gironde Hosp + Gironde RT-PCR + Weather + CT-scan + emergency units + ambulance service + Variants + Vaccine + Variant x PCR",
+                                  "Hosp + RT-R + Gironde Hosp + Gironde RT-PCR + Weather + CT-scan + emergency units + ambulance service + Variants + Vaccine + Vaccine x PCR"))) %>%
+  arrange(forecast, desc(df), step) %>%
+  knitr::kable(caption = "Median absolute and relative error of model predictions of Sars-Cov-2 pandemic with 95% confidence intervals. Data source evaluation.", format = format_kable) %>%
+  kableExtra::kable_styling()
+```
+
+```{r}
+dfPerfBoot %>%
+  filter(step == "EDSGirondeWeatherVariantsVaccine", forecast %in% c(7, 14)) %>%
+  select(forecast, rolderiv, span, model, AE_median, RE_median) %>%
+  arrange(forecast, span, model, desc(rolderiv)) %>%
+  knitr::kable(caption = "Median absolute and relative error of model predictions of Sars-Cov-2 pandemic with 95% confidence intervals. Statistical algorithm.", format = format_kable) %>%
+  kableExtra::kable_styling()
+```
+
+```{r errorvalue, fig.cap="Evolution of median absolute and relative errors by month."}
+errorvalue
+
+ggsave(device = "pdf", filename = "figures_pdf/Fig5_errorvalue.pdf")
+```
+
+```{r bootPI, fig.cap="Bootstrapped prediction intervals."}
+bootPI
+
+ggsave(device = "pdf", filename = "figures_pdf/FigS3_bootPI.pdf")
+```
+
+```{r handmadePI, fig.cap="Predictions with 10% prediction intervals at 7 days and 20% at 14 days."}
+plotHandmadePI
+```
+
+```{r}
+dfPerfCoverage %>%
+  group_by(forecast, ip, cut_date) %>%
+  summarise(pct_coverage = sum(bool_inboot)/n()) %>%
+  tidyr::pivot_wider(names_from = "ip", values_from = "pct_coverage") %>%
+  knitr::kable(caption = "95% prediction interval coverage by bootstrap and handmade 20-40% rule. Results by time period.",
+               col.names = c("Forecast day", "Period", "Bootstrap", "Handmade"),
+               digits = 3, format = format_kable) %>%
+  kableExtra::kable_styling()
+
+```
+
+```{r}
+dfPerfCoverage %>%
+  group_by(forecast, ip) %>%
+  summarise(pct_coverage = sum(bool_inboot)/n()) %>%
+  tidyr::pivot_wider(names_from = "ip", values_from = "pct_coverage") %>%
+  knitr::kable(caption = "95% prediction interval coverage by bootstrap and handmade 20-40% rule",
+               col.names = c("Forecast day", "Bootstrap", "Handmade"),
+               digits = 3, format = format_kable) %>%
+  kableExtra::kable_styling()
+
+```
+
+## Graph Bootstrap and EHR vs no EHR
+
+```{r figPIEDSvsNoEDS, fig.cap="Prediction intervals and comparions EHR vs no EHR", fig.height=8}
+figPIEDSvsNoEDS
+
+ggsave(device = "pdf", filename = "figures_pdf/Fig4_figPIEDSvsNoEDS.pdf")
+```
+
+## Graph vaccine vs no vaccine data
+
+```{r plotVaccinevsNovaccine, fig.cap="Comparions vaccine vs no vaccine data", fig.height=6}
+plotVaccinevsNovaccine
+```
+
+## Features importance
+
+```{r figImportanceCI, fig.cap="Features importance and bootstrapped confidence interval, percentage of days selecting the features in linear elastic-net model. Top 20 features are shown.", fig.height=7}
+figImportanceCI
+
+ggsave(device = "pdf", filename = "figures_pdf/Fig2_figImportanceCI.pdf")
+```
+
+```{r varimpevol7, fig.cap="Feature importance evolution. Percentage of days selecting each feature within each month. Only feature selected in every days of at least one period are displayed. 7 days forecast.", fig.height=8}
+lsPlotVarImpEvol[[1]]
+
+ggsave(device = "pdf", filename = "figures_pdf/FigS4_VarImpEvol7d.pdf")
+```
+
+```{r varimpevol14, fig.cap="Feature importance evolution. Percentage of days selecting each feature within each month. Only feature selected in every days of at least one period are displayed. 14 days forecast", fig.height=8}
+lsPlotVarImpEvol[[2]]
+
+ggsave(device = "pdf", filename = "figures_pdf/Fig6_VarImpEvol14d.pdf")
+```
+
+
+```{r PlotVariationVarImpUrgPed, fig.cap="Feature importance evolution. Percentage of days selecting each feature within each month. Only feature related to pediatric emergency and selected in at least 20% days of at least one period are displayed. 14 days forecast", fig.height=8}
+PlotVariationVarImpUrgPed
+```
+
+
