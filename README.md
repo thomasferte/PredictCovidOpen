@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/496952863.svg)](https://zenodo.org/badge/latestdoi/496952863)
+
 # PredictCovidOpen
 
 This project contain the code used for the preprint [Ferté, Thomas and Jouhet, Vianney and Griffier, Romain and Hejblum, Boris P. and Thiébaut, Rodolphe and crisis Task, Bordeaux University Hospital Covid-19, The Benefit of Augmenting Open Data with Clinical Data-Warehouse EHR for Forecasting SARS-CoV-2 Hospitalizations in Bordeaux Area, France.](http://dx.doi.org/10.2139/ssrn.4071506)
