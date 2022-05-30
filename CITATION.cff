@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Ferté"
+  given-names: "Thomas"
+- family-names: "Jouhet"
+  given-names: "Vianney"
+- family-names: "Griffier"
+  given-names: "Romain"
+- family-names: "Hejblum"
+  given-names: "Boris P"
+- family-names: "Thiébaut"
+  given-names: "Rodolphe"
+title: "thomasferte/PredictCovidOpen: Initial release"
+version: 0.1.0
+doi: 10.5281/zenodo.6595012
+date-released: 2022-05-30
+url: "https://doi.org/10.5281/zenodo.6595012"
