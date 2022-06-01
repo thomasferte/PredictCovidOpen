@@ -8,7 +8,7 @@ This project contain the code used for the preprint [Ferté, Thomas and Jouhet, 
 
 The project is organized as a R package. The analysis code is located in the reporting folder and uses the functions from the package located in the R folder. The intermediate results and the data used for the analysis are located in the extdata folder whereas the data needed by the functions are located in the data folder.
 
-### Reporting folder
+### Reporting/publication_journey folder
 
 In the reporting folder, the publication_journey folder contain the scripts used for the analysis.
 
@@ -41,6 +41,16 @@ Corresponds to the statistical report.
 
 - reporting_article_precompute.R perform the heavy computations to present the results.
 - reporting_article.Rmd organise the results and save figures. The output of this file are the corresponding md file and folder. Also, the figure used in the publication process are savec in the figures_pdf folder.
+
+### Reporting/stream_model folder
+
+#### 01_importData.R
+
+Script to import both EHR and open data and merge them. This script is called by 02_train_model.R
+
+#### 02_train_model.R
+
+First call 01_importData.R to import the data and then train the model with appropriate hyperparameters set in lsModel object and passed to the Prediction function. The Prediction function is iterated over 1 to 14 days.
 
 ### extdata folder
 
