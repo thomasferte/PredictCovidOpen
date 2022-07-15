@@ -7,8 +7,8 @@
 #'
 #' @return The imputed dataframe with meteo data.
 #' @export
-#' @import worldmet
-#' @importFrom mice mice complete
+# #' @import worldmet
+# #' @importFrom mice mice complete
 #'
 #' @examples
 #' \dontrun{

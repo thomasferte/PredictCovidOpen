@@ -18,10 +18,10 @@
 #'
 #' @return A list of two dataframe: cross validated tree predictions and variables importance
 #' @import lubridate
-#' @importFrom  randomForest randomForest
+# #' @importFrom  randomForest randomForest
 #' @importFrom stats predict
 #' @importFrom stats rnorm
-#' @import FrechForest
+# #' @import FrechForest
 #' @export
 cvFrechetRf_slarTask <- function(df,
                                  char_colDate = "DATE",

@@ -10,7 +10,7 @@
 #' @param mfp should fractional polynomial be used on numeric values
 #'
 #' @return A list of two dataframes: prediction and coefficients
-#' @import mfp
+# #' @import mfp
 #' @export
 CHULmModel <- function(param_FORECAST,
                        param_DATE,

@@ -18,7 +18,7 @@
 #'
 #' @return A list of two dataframe: the variable importance and the predictions
 #' @importFrom fastDummies dummy_columns
-#' @importFrom e1071 tune.svm
+# #' @importFrom e1071 tune.svm
 #' @export
 FctTrainSvm <- function(yTrain,
                         xTrain,

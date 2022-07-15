@@ -27,8 +27,8 @@
 #'
 #' @return A list of two dataframe: cross validated tree predictions and variables importance
 #' @import lubridate
-#' @importFrom  randomForest randomForest
-#' @importFrom ranger ranger
+# #' @importFrom  randomForest randomForest
+# #' @importFrom ranger ranger
 #' @export
 cvRf_slarTask <- function(df,
                           char_colDate = "DATE",

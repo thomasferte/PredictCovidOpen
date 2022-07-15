@@ -9,7 +9,7 @@
 #'
 #' @return A list of two dataframe: cross validated tree predictions and variables importance
 #' @import lubridate
-#' @importFrom  randomForest randomForest
+# #' @importFrom  randomForest randomForest
 #' @importFrom stats lm
 #' @export
 cvlm_slarTask <- function(dbl_depOfInterest = 33,
