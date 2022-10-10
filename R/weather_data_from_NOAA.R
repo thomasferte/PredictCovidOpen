@@ -23,7 +23,7 @@
 #'
 #' @import dplyr
 #' @importFrom tidyr replace_na
-#' @importFrom worldmet importNOAA
+# #' @importFrom worldmet importNOAA
 #' @importFrom lubridate as_date
 #' @importFrom hablar mean_ min_ max_ sum_
 #'
